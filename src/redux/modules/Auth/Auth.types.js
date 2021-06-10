@@ -1,0 +1,8 @@
+const types = {
+  LOGIN_USER_SUCCES: 'LOGIN_USER_SUCCES',
+  LOGIN_USER_FAILED: 'LOGIN_USER_FAILED',
+  LOGIN_USER: 'LOGIN_USER',
+  SET_USER: 'SET_USER',
+};
+
+export default types;
