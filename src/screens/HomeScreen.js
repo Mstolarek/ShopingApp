@@ -1,14 +1,26 @@
 import React from 'react';
 import {View, Text, StyleSheet, FlatList, TouchableOpacity} from 'react-native';
 import FBA from '../components/FBA';
+import Fontisto from 'react-native-vector-icons/Fontisto';
+Fontisto.loadFont();
+import {secoundary} from '../constans/colors';
+import {SignOutUser} from '../services/FireBaseAuthService';
 
 import MainList from '../components/MainList';
 
 const HomeScreen = () => {
   return (
     <View style={styles.container}>
-      <Text style={styles.headerText}>Home</Text>
-      <MainList />
+      <View style={styles.headerView}>
+        <Text style={styles.headerText}>Home</Text>
+        <TouchableOpacity
+          onPress={() => SignOutUser()}
+          style={styles.settingsIcon}>
+          <Fontisto name="linux" size={40} color={secoundary} />
+        </TouchableOpacity>
+      </View>
+
+      <MainList Direction={'Home'} />
       <FBA />
     </View>
   );
@@ -16,9 +28,14 @@ const HomeScreen = () => {
 
 const styles = StyleSheet.create({
   container: {flex: 1},
-  headerText: {
-    margin: 15,
+  headerView: {
+    flexDirection: 'row',
     marginTop: 50,
+    justifyContent: 'center',
+  },
+  settingsIcon: {position: 'absolute', right: 20},
+  headerText: {
+    marginHorizontal: 15,
     alignSelf: 'center',
     fontSize: 32,
     fontWeight: 'bold',

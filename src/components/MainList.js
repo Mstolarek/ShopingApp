@@ -1,11 +1,11 @@
 import React from 'react';
 import {FlatList, TouchableOpacity} from 'react-native';
 import {useSelector} from 'react-redux';
-import {getMainList} from '../redux/modules/Lists/Lists.selectors';
+import {getHistory, getMainList} from '../redux/modules/Lists/Lists.selectors';
 import List from './List';
 
-const MainList = () => {
-  const Lists = useSelector(getMainList);
+const MainList = ({Direction}) => {
+  const Lists = Direction === 'Home' ? useSelector(getMainList) : useSelector(getHistory)
   return (
     <FlatList
       data={Lists}
@@ -16,6 +16,7 @@ const MainList = () => {
           ListTitle={item.ListTitle}
           ListContent={item.content}
           ListLength={item.length}
+          ListId={item.ListId}
         />
       )}
     />

@@ -17,14 +17,33 @@ import {
   additem,
   addtab,
   changename,
+  changetaskstatus,
+  copylist,
+  edittab,
+  removeitem,
   resetlist,
 } from '../redux/modules/Lists/Lists.actions';
 
-const CreateListModalScreen = ({navigation}) => {
+const CreateListModalScreen = ({navigation, route}) => {
+  const dispatch = useDispatch();
   const Lists = useSelector(getMainList);
   const List = useSelector(getList);
-  const dispatch = useDispatch();
-  const [headerVal, setHeaderVal] = useState(`List ${Lists.length}`);
+  let butttonText;
+
+  const aList = Lists.map((arr) => {
+    return arr.ListId === route.params ? Lists[route.params] : null;
+  });
+
+  let headerState = `List ${Lists.length}`;
+  route.params >= 0
+    ? ((headerState = aList[route.params].ListTitle), (butttonText = 'Confirm'))
+    : (butttonText = 'Add');
+
+  useEffect(() => {
+    route.params >= 0 && dispatch(copylist(aList[route.params]));
+  }, []);
+
+  const [headerVal, setHeaderVal] = useState(headerState);
   const [inputVal, setInputVal] = useState('');
 
   useEffect(() => {
@@ -33,7 +52,9 @@ const CreateListModalScreen = ({navigation}) => {
 
   const AddButtonHandler = (payload) => {
     return (
-      dispatch(addtab(payload)),
+      route.params >= 0
+        ? dispatch(edittab(payload))
+        : dispatch(addtab(payload)),
       dispatch(resetlist()),
       navigation.navigate('Home')
     );
@@ -43,12 +64,36 @@ const CreateListModalScreen = ({navigation}) => {
     setInputVal('');
   };
 
+  const ArrowIconHandler = () => {
+    dispatch(resetlist()), navigation.navigate('Home');
+  };
+
+  const RenderItem = ({item}) => {
+    const iconName =
+      item.taskDone === true ? 'checkbox-active' : 'checkbox-passive';
+    return (
+      <View style={{flexDirection: 'row'}}>
+        <TouchableOpacity
+          onPress={() => dispatch(changetaskstatus(item.id))}
+          style={styles.checkIcon}>
+          <Fontisto name={iconName} size={20} color={primary} />
+        </TouchableOpacity>
+        <Text style={styles.listItemText}>{item.title}</Text>
+        <TouchableOpacity
+          onPress={() => dispatch(removeitem(item.id))}
+          style={styles.crossIcon}>
+          <Fontisto name="close-a" size={20} color={secoundary} />
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
   return (
     <View style={styles.conainer}>
       <View style={styles.headerView}>
         <TouchableOpacity
           onPress={() => {
-            navigation.navigate('Home');
+            ArrowIconHandler();
           }}
           style={styles.arrowIcon}>
           <Fontisto name="arrow-left" size={40} color={secoundary} />
@@ -70,25 +115,20 @@ const CreateListModalScreen = ({navigation}) => {
             setInputVal(x);
           }}
           onEndEditing={() => {
-            AddItemHandler();
+            inputVal && AddItemHandler();
           }}
           style={styles.input}
         />
       </View>
       <View style={styles.ListView}>
-        <FlatList
-          data={List.content}
-          renderItem={({item}) => (
-            <Text style={styles.listItemText}>{item.title}</Text>
-          )}
-        />
+        <FlatList data={List.content} renderItem={RenderItem} />
       </View>
       <TouchableOpacity
         onPress={() => {
           AddButtonHandler(List);
         }}
         style={styles.button}>
-        <Text style={styles.butttonText}>Add</Text>
+        <Text style={styles.butttonText}>{butttonText}</Text>
       </TouchableOpacity>
     </View>
   );
@@ -102,13 +142,15 @@ const styles = StyleSheet.create({
     bottom: 110,
     width: '80%',
   },
-  listItemText: {fontSize: 16},
+  listItemText: {fontSize: 20, left: 40},
   headerView: {
     flexDirection: 'row',
     marginTop: 50,
     justifyContent: 'center',
   },
   arrowIcon: {position: 'absolute', left: 20},
+  crossIcon: {position: 'absolute', right: 0},
+  checkIcon: {position: 'absolute', alignSelf: 'flex-start'},
   headerText: {
     marginHorizontal: 15,
     alignSelf: 'center',

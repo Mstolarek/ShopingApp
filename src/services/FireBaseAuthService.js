@@ -9,3 +9,7 @@ export const CreateUser = async (login, password) => {
 export const SignInUser = async (login, password) => {
   return auth().signInWithEmailAndPassword(login, password);
 };
+
+export const SignOutUser = async () => {
+  return auth().signOut();
+};

@@ -4,6 +4,7 @@ import {primary} from '../constans/colors';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 
 import {useNavigation} from '@react-navigation/core';
+
 Fontisto.loadFont();
 
 const FBA = () => {

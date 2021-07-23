@@ -1,7 +1,9 @@
 import types from './Lists.types';
 
-const initialState = [
-  {ListId: null, ListTitle: '', content: [], isSelected: false},
+// type ListItemType = {ListId: number, ListTitle: string', content: string[], isSelected: boolean},
+
+const initialState /*:ListItemType[] */ = [
+  // {ListId: null, ListTitle: '', content: [], isSelected: false},
 ];
 
 const MainListReducer = (state = initialState, action) => {
@@ -15,6 +17,25 @@ const MainListReducer = (state = initialState, action) => {
           content: action.payload.content,
           isSelected: false,
         },
+      ];
+    case types.EDIT_TAB:
+      return [
+        ...state.map((obj) => {
+          return obj.ListId === action.payload.ListId
+            ? {
+                ListId: action.payload.ListId,
+                ListTitle: action.payload.ListTitle,
+                content: action.payload.content,
+                isSelected: false,
+              }
+            : obj;
+        }),
+      ];
+    case types.DELETE_TAB:
+      return [
+        ...state.filter((obj) => {
+          return obj.ListId !== action.payload;
+        }),
       ];
     default:
       return state;

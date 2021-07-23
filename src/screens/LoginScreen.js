@@ -36,6 +36,7 @@ const LoginScreen = ({navigation}) => {
         <TextInput
           value={login}
           onChangeText={(newlogin) => setLogin(newlogin)}
+          autoCapitalize={'none'}
           style={styles.input}
         />
         <Text style={styles.label}>Password</Text>
