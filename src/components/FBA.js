@@ -13,7 +13,7 @@ const FBA = () => {
   return (
     <TouchableOpacity
       onPress={() => {
-        navigation.navigate('CreateList');
+        navigation.navigate('CreateList', {ListId: -1, Direction: 'Home'});
       }}
       style={styles.container}>
       <Fontisto name={'plus-a'} size={30} color={'white'} />

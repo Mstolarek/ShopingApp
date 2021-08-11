@@ -7,7 +7,11 @@ import {
   TextInput,
   FlatList,
 } from 'react-native';
-import {getList, getMainList} from '../redux/modules/Lists/Lists.selectors';
+import {
+  getHistory,
+  getList,
+  getMainList,
+} from '../redux/modules/Lists/Lists.selectors';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 Fontisto.loadFont();
 import {primary, secoundary} from '../constans/colors';
@@ -26,21 +30,28 @@ import {
 
 const CreateListModalScreen = ({navigation, route}) => {
   const dispatch = useDispatch();
-  const Lists = useSelector(getMainList);
+  const Lists =
+    route.params.Direction === 'Home'
+      ? useSelector(getMainList)
+      : useSelector(getHistory);
   const List = useSelector(getList);
   let butttonText;
 
   const aList = Lists.map((arr) => {
-    return arr.ListId === route.params ? Lists[route.params] : null;
+    return arr.ListId === route.params.ListId
+      ? Lists[route.params.ListId]
+      : null;
   });
-
+  console.log(route);
+  console.log(Lists);
   let headerState = `List ${Lists.length}`;
-  route.params >= 0
-    ? ((headerState = aList[route.params].ListTitle), (butttonText = 'Confirm'))
+  route.params.ListId >= 0
+    ? ((headerState = aList[route.params.ListId].ListTitle),
+      (butttonText = 'Confirm'))
     : (butttonText = 'Add');
 
   useEffect(() => {
-    route.params >= 0 && dispatch(copylist(aList[route.params]));
+    route.params.ListId >= 0 && dispatch(copylist(aList[route.params.ListId]));
   }, []);
 
   const [headerVal, setHeaderVal] = useState(headerState);
@@ -52,7 +63,7 @@ const CreateListModalScreen = ({navigation, route}) => {
 
   const AddButtonHandler = (payload) => {
     return (
-      route.params >= 0
+      route.params.ListId >= 0
         ? dispatch(edittab(payload))
         : dispatch(addtab(payload)),
       dispatch(resetlist()),
@@ -111,6 +122,7 @@ const CreateListModalScreen = ({navigation, route}) => {
         <TextInput
           value={inputVal}
           placeholder={'Add new item to list'}
+          autoCapitalize={'none'}
           onChangeText={(x) => {
             setInputVal(x);
           }}

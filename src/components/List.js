@@ -13,7 +13,7 @@ import {secoundary, primary} from '../constans/colors';
 import {useNavigation} from '@react-navigation/native';
 import MiniFab from './miniFab';
 
-const List = ({ListTitle, ListContent, ListLength, ListId}) => {
+const List = ({ListTitle, ListContent, ListLength, ListId, Direction}) => {
   const listData = ListContent.slice(0, 3);
   const navigation = useNavigation();
 
@@ -25,23 +25,25 @@ const List = ({ListTitle, ListContent, ListLength, ListId}) => {
   };
 
   const onLongPressHandler = () => {
-    Animated.spring(value, {
-      // duration: 300,
-      toValue: 1,
-      // friction: 1,
-      // bounciness: 5000,
-      stiffness: 100,
-      // easing: Easing.bounce,
-      useNativeDriver: true,
-    }).start(() => {
-      setTimeout(() => {
-        Animated.timing(value, {
-          duration: 300,
-          toValue: 0,
+    Direction === 'Home'
+      ? Animated.spring(value, {
+          // duration: 300,
+          toValue: 1,
+          // friction: 1,
+          // bounciness: 5000,
+          stiffness: 100,
+          // easing: Easing.bounce,
           useNativeDriver: true,
-        }).start();
-      }, 5000);
-    });
+        }).start(() => {
+          setTimeout(() => {
+            Animated.timing(value, {
+              duration: 300,
+              toValue: 0,
+              useNativeDriver: true,
+            }).start();
+          }, 5000);
+        })
+      : null;
   };
 
   const scale = value.interpolate({
@@ -57,7 +59,10 @@ const List = ({ListTitle, ListContent, ListLength, ListId}) => {
           onLongPressHandler();
         }}
         onPress={() => {
-          navigation.navigate('CreateList', ListId);
+          navigation.navigate('CreateList', {
+            ListId: ListId,
+            Direction: Direction,
+          });
         }}
         style={{flex: 1, padding: 5, position: 'relative'}}>
         <FlatList
